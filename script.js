@@ -1,4 +1,4 @@
-// JEEPER
+// ROUTINEERS script
 
 // Get screen size
 var w = window,
