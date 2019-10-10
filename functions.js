@@ -4,10 +4,6 @@
 function rdm(fork) {
   return Math.floor(Math.random()*(fork));
 }
-// Timer for moveIt
-function timer() {
-  setTimeout(moveIt, 10);
-}
 // Find ckick/touch coordinate
 function findClickPos(event) {
   g.x = event.clientX;
@@ -15,9 +11,8 @@ function findClickPos(event) {
   mesHypo();
   g.s.left = g.x;
   g.s.top = g.y;
-  if (moving == false) {
-    timer();
-  }
+  clearInterval(interID);
+  timer();
 }
 // Work out distance, angle, gradient and yIntercept
 function mesHypo() {
@@ -40,52 +35,55 @@ function mesHypo() {
   text += "<br> y intercept: "+line.yIntercept;
   d.getElementById("text").innerHTML = text;
 }
+// Timer for moveIt
+function timer() {
+  interID = setInterval(moveIt, speed);
+}
 // Move functions
 function moveIt() {
-  moving = true;
-if (Math.abs(triW) > Math.abs(triH)) {
-  if ( j.x < g.x ){
-    j.x++;
-  } else if ( j.x > g.x ) {
-    j.x--;
-  }
-  j.y = moveLineX();
-} else {
-  if ( j.y < g.y ){
-    j.y++;
-  } else if ( j.y > g.y ) {
-    j.y--;
-  }
-  j.x = moveLineY();
-}
-  j.s.left = j.x;
-  j.s.top = j.y;
-  // keep moving unless goal or wall reached
-  if (obsCheck()) {
-    if ( (j.x != g.x) || (j.y != g.y) ) {
-      timer();
+  let next = new Object();
+  if (Math.abs(triW) > Math.abs(triH)) {
+    if ( j.x < g.x ){
+      next.x = j.x+1;
     } else {
-      moving = false;
+      next.x = j.x-1;
+    }
+    next.y = moveLineX(next.x);
+  } else {
+    if ( j.y < g.y ){
+      next.y = j.y+1;
+    } else {
+      next.y = j.y-1;
+    }
+    next.x = moveLineY(next.y);
+  }
+  // If clear, move
+  if (!obsCheck(next.x,next.y)) {
+    j.x = next.x;
+    j.y = next.y;
+    j.s.left = j.x;
+    j.s.top = j.y;
+    if ( (j.x == g.x) && (j.y == g.y) ) {
+       clearInterval(interID);
+       d.getElementById("text").innerHTML += '  -  ARRIVED';
     }
   } else {
-    moving = false;
+    clearInterval(interID);
   }
 }
-function moveLineX() {
-  return Math.round((line.gradient * j.x) + line.yIntercept);
+// Line equations
+function moveLineX(x) {
+  return Math.round((line.gradient * x) + line.yIntercept);
 }
-function moveLineY() {
-  return Math.round((j.y - line.yIntercept) / line.gradient);
+function moveLineY(y) {
+  return Math.round((y - line.yIntercept) / line.gradient);
 }
 // Check for obstacles
-function obsCheck() {
-  vision = d.elementFromPoint(j.x,j.y);
-//  let backCol = window.getComputedStyle(vision).getPropertyValue('background-color');
-
+function obsCheck(x,y) {
+  vision = d.elementFromPoint(x,y);
   if (vision.id == 'wall') {
     d.getElementById("text").innerHTML += '  -  HIT';
-    return false;
+    return true;
   }
-  return true;
-
+  return false;
 }

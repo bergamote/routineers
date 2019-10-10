@@ -17,8 +17,13 @@ var w = window,
     wall = d.getElementById('wall'),
     triW,
     triH,
-    moving = false,
-    vision;
+    moving = true,
+    vision,
+    interID,
+// ticks, in ms
+    speed = 10;
+
+
 
 j.s = jeeper.style;
 g.s = goal.style;
@@ -32,8 +37,8 @@ j.y = rdm(screenHeight -10);
 g.x = rdm(screenWidth -10);
 g.y =  rdm(screenHeight -10);
 
-w.s.left = rdm(screenWidth -100);
-w.s.top =  rdm(screenHeight -100);
+w.s.left = rdm(screenWidth);
+w.s.top =  rdm(screenHeight);
 w.s.transform = "rotate("+rdm(180)+"deg)";
 
 j.s.left = j.x;
