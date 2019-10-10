@@ -1,0 +1,56 @@
+
+html, body {
+  height: 100%;
+}
+body {
+  background: #333;
+  margin: 0;
+  overflow: hidden;
+}
+.sqr {
+  width:1px;
+  height: 1px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 11px;
+  margin: -12px 0 0 -12px;
+  border-radius: 20px;
+}
+#jeeper {
+  background: #312;
+}
+#jeeper div {
+  background: #236;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  margin: auto;
+  position: relative;
+}
+#wall {
+  position: absolute;
+  width: 1px;
+  height: 200px;
+  padding: 20px;
+  margin: 12px;
+  background-color: #583574;
+  clip-path: circle(50%);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 6px 8px;
+  background: #236;
+  color: #ddd;
+  opacity: 0.5;
+  font-size: 1em;
+  border-radius: 0.4em 0 0 0;
+  font-family: monospace;
+}
+p {
+  padding: 0;
+  margin: 0;
+}
