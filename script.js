@@ -12,9 +12,9 @@ var w = window,
     j = new Object(),
     w = new Object(),
     line = new Object(),
-    jeeper = d.getElementById('jeeper'),
-    goal = d.getElementById('goal'),
-    wall = d.getElementById('wall'),
+    jeeper = byId('jeeper'),
+    goal = byId('goal'),
+    wall = byId('wall'),
     triW,
     triH,
     moving = true,
@@ -39,7 +39,7 @@ g.y =  rdm(screenHeight -10);
 
 w.s.left = rdm(screenWidth);
 w.s.top =  rdm(screenHeight);
-w.s.transform = "rotate("+rdm(180)+"deg)";
+w.s.transform = "rotate("+rdm(180)+"deg) translate(0px, -100px)";
 
 j.s.left = j.x;
 j.s.top = j.y;

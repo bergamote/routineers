@@ -1,9 +1,6 @@
 // ROUTINEERS functions
 
-// Get a random number
-function rdm(fork) {
-  return Math.floor(Math.random()*(fork));
-}
+
 // Find ckick/touch coordinate
 function findClickPos(event) {
   g.x = event.clientX;
@@ -20,20 +17,17 @@ function mesHypo() {
   triH = g.y - j.y;
   line.gradient = ((g.y - j.y) / (g.x - j.x));
   line.yIntercept = g.y - line.gradient * g.x;
-  /*
+  /* // Needs implementing
   if(Math.abs(line.gradient) === Infinity) {
     return 'x = ' + g.x;
-  }
-  */
-  line.dist = Math.floor(Math.sqrt(
-    (triW * triW) + (triH * triH)
-  ));
+  }*/
+  line.dist = Math.round(Math.hypot(triW, triH));
   line.angle = Math.atan2(triH, triW) * 180 / Math.PI;
-  j.s.transform = "rotate("+(line.angle-45)+"deg)";
+  j.s.transform = "rotate("+(line.angle+135)+"deg)";
   text = "distance: "+line.dist+" angle: "+line.angle;
   text += "<br> grad: "+line.gradient;
   text += "<br> y intercept: "+line.yIntercept;
-  d.getElementById("text").innerHTML = text;
+  byId("text").innerHTML = text;
 }
 // Timer for moveIt
 function timer() {
@@ -58,14 +52,15 @@ function moveIt() {
     next.x = moveLineY(next.y);
   }
   // If clear, move
-  if (!obsCheck(next.x,next.y)) {
+  let eyePos = byId("eye").getBoundingClientRect();
+  if ( !obsCheck(eyePos.left , eyePos.top) ) {
     j.x = next.x;
     j.y = next.y;
     j.s.left = j.x;
     j.s.top = j.y;
     if ( (j.x == g.x) && (j.y == g.y) ) {
        clearInterval(interID);
-       d.getElementById("text").innerHTML += '  -  ARRIVED';
+       byId("text").innerHTML += '  -  ARRIVED';
     }
   } else {
     clearInterval(interID);
@@ -86,4 +81,13 @@ function obsCheck(x,y) {
     return true;
   }
   return false;
+}
+
+// Get a random number
+function rdm(fork) {
+  return Math.floor(Math.random()*(fork));
+}
+// Get element by ID but quicker
+function byId(elem){
+  return document.getElementById(elem);
 }

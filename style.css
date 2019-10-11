@@ -20,13 +20,20 @@ body {
 #jeeper {
   background: #312;
 }
-#jeeper div {
+#eye, #fake-eye {
+  width: 1px;
+  height: 1px;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  top:0px;
+  left:0px
+}
+#fake-eye {
   background: #236;
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  margin: auto;
-  position: relative;
+  width: 2px;
+  height: 2px;
+  padding: 6px;
 }
 #wall {
   position: absolute;
@@ -35,7 +42,6 @@ body {
   padding: 20px;
   margin: 12px;
   background-color: #583574;
-  clip-path: circle(50%);
 }
 
 footer {
