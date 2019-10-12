@@ -18,7 +18,11 @@ body {
   border-radius: 20px;
 }
 #jeeper {
-  background: #312;
+  background: #ddd;
+}
+#goal {
+    background: #dddd53;
+    opacity: 0.8;
 }
 #eye, #fake-eye {
   width: 1px;
@@ -42,6 +46,9 @@ body {
   padding: 20px;
   margin: 12px;
   background-color: #583574;
+}
+#apple {
+    background: #dddd53;
 }
 
 footer {

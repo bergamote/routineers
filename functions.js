@@ -1,6 +1,5 @@
 // ROUTINEERS functions
 
-
 // Find ckick/touch coordinate
 function findClickPos(event) {
   g.x = event.clientX;
@@ -75,9 +74,9 @@ function moveLineY(y) {
 }
 // Check for obstacles
 function obsCheck(x,y) {
-  vision = d.elementFromPoint(x,y);
+  let vision = d.elementFromPoint(x,y);
   if (vision.id == 'wall') {
-    d.getElementById("text").innerHTML += '  -  HIT';
+    byId("text").innerHTML += '  -  HIT';
     return true;
   }
   return false;

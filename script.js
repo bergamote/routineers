@@ -7,45 +7,35 @@ var w = window,
     g = d.getElementsByTagName('body')[0],
     screenWidth = w.innerWidth || e.clientWidth || g.clientWidth,
     screenHeight = w.innerHeight|| e.clientHeight|| g.clientHeight,
-
-    g = new Object(),
-    j = new Object(),
-    w = new Object(),
-    line = new Object(),
+// Setup too many global variables
+    g = {},
+    j = {},
+    w = {},
+    line = {},
     jeeper = byId('jeeper'),
     goal = byId('goal'),
     wall = byId('wall'),
-    triW,
-    triH,
-    moving = true,
-    vision,
+    triW = 0,
+    triH = 0,
     interID,
 // ticks, in ms
     speed = 10;
-
-
-
+// Shortcuts
 j.s = jeeper.style;
 g.s = goal.style;
 w.s = wall.style;
-
-j.s.backgroundColor = "#ddd";
-g.s.backgroundColor = "#d53";
-
-j.x = rdm(screenWidth -10) ;
-j.y = rdm(screenHeight -10);
-g.x = rdm(screenWidth -10);
-g.y =  rdm(screenHeight -10);
-
-w.s.left = rdm(screenWidth);
-w.s.top =  rdm(screenHeight);
-w.s.transform = "rotate("+rdm(180)+"deg) translate(0px, -100px)";
-
+// Random locations
+j.x = rdm(screenWidth -12)+6 ;
+j.y = rdm(screenHeight -12)+6;
+g.x = rdm(screenWidth -12)+6;
+g.y =  rdm(screenHeight -12)+6;
 j.s.left = j.x;
 j.s.top = j.y;
 g.s.left = g.x;
 g.s.top = g.y;
-
+w.s.left = (rdm(screenWidth)/3)*2;
+w.s.top =  (rdm(screenHeight)/3)*2;
+w.s.transform = "rotate("+rdm(180)+"deg) translate(0px, -100px)";
 
 mesHypo();
 timer();
