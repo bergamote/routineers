@@ -15,8 +15,6 @@ var w = window,
     jeeper = byId('jeeper'),
     goal = byId('goal'),
     wall = byId('wall'),
-    triW = 0,
-    triH = 0,
     interID,
 // ticks, in ms
     speed = 10;
@@ -29,6 +27,7 @@ j.x = rdm(screenWidth -12)+6 ;
 j.y = rdm(screenHeight -12)+6;
 g.x = rdm(screenWidth -12)+6;
 g.y =  rdm(screenHeight -12)+6;
+
 j.s.left = j.x;
 j.s.top = j.y;
 g.s.left = g.x;
@@ -37,6 +36,9 @@ w.s.left = (rdm(screenWidth)/3)*2;
 w.s.top =  (rdm(screenHeight)/3)*2;
 w.s.transform = "rotate("+rdm(180)+"deg) translate(0px, -100px)";
 
-mesHypo();
+byId('apple').s.top = rdm(screenHeight -12)+6 ;
+byId('apple').s.left = rdm(screenWidth -12)+6 ;
+
+line = mesHypo(j,g);
 timer();
 document.addEventListener("click", findClickPos);
