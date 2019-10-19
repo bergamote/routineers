@@ -4,30 +4,58 @@
 function findClickPos(event) {
   g.x = event.clientX;
   g.y = event.clientY;
-  line = mesHypo(j,g);
+  line = setLine(j,g);
   g.s.left = g.x;
   g.s.top = g.y;
   clearInterval(interID);
   timer();
 }
 // Work out distance, angle, gradient and yIntercept
-function mesHypo(a,b) {
-  let l = {};
-  l.triW = b.x - a.x;
-  l.triH = b.y - a.y;
-  l.gradient = ((b.y - a.y) / (b.x - a.x));
-  l.yIntercept = b.y - l.gradient * b.x;
-  /* // Needs implementing
-  if(Math.abs(l.gradient) === Infinity) {
-    return 'x = ' + b.x;
-  }*/
-  l.dist = Math.round(Math.hypot(l.triW, l.triH));
-  l.angle = Math.atan2(l.triH, l.triW) * 180 / Math.PI;
-  text = "distance: "+l.dist+" angle: "+l.angle;
-  text += "<br> grad: "+l.gradient;
-  text += "<br> y intercept: "+l.yIntercept;
+function setLine( point1, point2 ) {
+  let line = makeTriangle(point1,point2);
+  line.gradient = findLineGradient( point1, point2 );
+  line.yIntercept = findYIntercept( line.gradient, point2);
+  line.dist = measureHypot( point1, point2 );
+  line.angle = findLineAngle( point1, point2 )
+
+  text = "distance: "+line.dist+" angle: "+line.angle;
+  text += "<br> grad: "+line.gradient;
+  text += "<br> y intercept: "+line.yIntercept;
   byId("text").innerHTML = text;
-  return l;
+  return line;
+}
+function makeTriangle( point1, point2 ){
+  let triangle = {};
+  triangle.width = point2.x - point1.x;
+  triangle.height = point2.y - point1.y;
+  return triangle;
+}
+function measureHypot( point1, point2 ) {
+  let triangle = makeTriangle(point1,point2);
+  triangle.hypot = Math.round(
+    Math.hypot(
+      triangle.width, triangle.height
+    )
+  );
+  return triangle.hypot;
+}
+function findLineGradient( point1, point2 ) {
+  return (
+    (point2.y - point1.y) / (point2.x - point1.x)
+    /* // Needs implementing
+    if(Math.abs(result) === Infinity) {
+      return 'x = ' + b.x;
+    }*/
+  );
+}
+function findYIntercept( gradient, point ) {
+  return ( point.y - gradient * point.x );
+}
+function findLineAngle(point1, point2){
+  let triangle = makeTriangle(point1,point2);
+  return ( Math.atan2(
+    triangle.height, triangle.width
+  ) * 180 / Math.PI );
 }
 // Timer for moveIt
 function timer() {
@@ -37,7 +65,7 @@ function timer() {
 function moveIt() {
   j.s.transform = "rotate("+(line.angle+135)+"deg)";
   let next = {};
-  if (Math.abs(line.triW) > Math.abs(line.triH)) {
+  if (Math.abs(line.width) > Math.abs(line.height)) {
     if ( j.x < g.x ){
       next.x = j.x+1;
     } else {
@@ -53,18 +81,18 @@ function moveIt() {
     next.x = moveLineY(next.y, line);
   }
   // If clear, move
-  if ( !colCheck("eye") ) {
+  if ( !colisionCheck("eye") ) {
     j.x = next.x;
     j.y = next.y;
     j.s.left = j.x;
     j.s.top = j.y;
     if ( (j.x == g.x) && (j.y == g.y) ) {
-       clearInterval(interID);
-       byId("text").innerHTML += '  -  ARRIVED';
+      clearInterval(interID);
+      byId("text").innerHTML += '  -  ARRIVED';
     }
   } else {
     clearInterval(interID);
-    avoidObs();
+    // avoid obstacle here -> avoidObs()
   }
 }
 // Line equations
@@ -75,15 +103,18 @@ function moveLineY(y,l) {
   return Math.round((y - l.yIntercept) / l.gradient);
 }
 // Check for obstacles
-function colCheck(x) {
+function colisionCheck(x) {
   let eyePos = byId(x).getBoundingClientRect();
-  let vision = d.elementFromPoint(eyePos.left , eyePos.top);
+  let vision = document.elementFromPoint(
+    eyePos.left , eyePos.top
+  );
   if (vision.id == 'wall') {
     byId("text").innerHTML += '  -  HIT';
+    console.log(vision.getBoundingClientRect());
     return true;
   } else if (vision.id == 'apple') {
-    byId('apple').s.top = rdm(screenHeight -12)+6 ;
-    byId('apple').s.left = rdm(screenWidth -12)+6 ;
+    byId("text").innerHTML += '  -  MUNCH';
+    placeAtRandom(scrn, 'apple', 24);
   }
   return false;
 }
@@ -93,15 +124,39 @@ function avoidObs(deg=1) {
     avoidObs(deg+1);
   }
 }
-
-
 // Get a random number
 function rdm(fork) {
   return Math.floor(Math.random()*(fork));
 }
-// Get element by ID but quicker
+function rdmWithOffset(fork, offset = 0){
+  return ( (rdm(fork - offset)) + (offset/2) );
+};
+// Get a random point on the screen
+function rdmScreenPoint(screenSize, offset = 0) {
+  let pointCoord = {};
+  pointCoord.x = rdmWithOffset(screenSize.x, offset);
+  pointCoord.y = rdmWithOffset(screenSize.y, offset);
+  return pointCoord;
+}
+function placeAtRandom(screenSize, id, offset=0){
+  point = rdmScreenPoint(screenSize, offset) ;
+  byId(id).s.top = point.y;
+  byId(id).s.left = point.x;
+}
+// getElementById but quicker
 function byId(elem){
   x = document.getElementById(elem);
   x.s = x.style;
   return x;
+}
+// Get screen size
+function getScreenSize(){
+  let w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    ourScreen = {};
+  ourScreen.x = w.innerWidth || e.clientWidth || g.clientWidth,
+  ourScreen.y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  return ourScreen;
 }
