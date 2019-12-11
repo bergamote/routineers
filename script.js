@@ -12,23 +12,24 @@ var line = {},
     speed = 10;
 
 // Random locations
-var point = rdmScreenPoint(scrn, 24) ;
-j.x = point.x;
-j.y = point.y;
-point = rdmScreenPoint(scrn, 24) ;
-g.x = point.x;
-g.y =  point.y;
+setDot(j);
+setDot(g);
 
-j.s.left = j.x;
-j.s.top = j.y;
-g.s.left = g.x;
-g.s.top = g.y;
 
 w.s.left = (rdm(scrn.x)/3)*2;
 w.s.top =  (rdm(scrn.y)/3)*2;
-w.s.transform = "rotate("+rdm(180)+"deg) translate(0px, -100px)";
+w.s.transform = "translate(0px, -100px)";
 
 placeAtRandom(scrn, 'apple', 24);
+
 line = setLine(j,g);
-timer();
+rotateToAngle(j,line);
+timer(j,g,line);
 document.addEventListener("click", findClickPos);
+
+var test = {};
+test.hello = "world";
+test.goal = setGoal('goal');
+test.line = findLineEquation( j, test.goal );
+test.tri = makeTriangle( j, test.goal );
+console.log(test);

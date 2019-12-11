@@ -1,5 +1,13 @@
 // ROUTINEERS functions
 
+// Setup generic dot
+function setDot(name) {
+  var point = rdmScreenPoint(scrn, 24) ;
+  name.x = point.x;
+  name.y = point.y;
+  name.s.left = name.x;
+  name.s.top = name.y;
+}
 // Find ckick/touch coordinate
 function findClickPos(event) {
   g.x = event.clientX;
@@ -8,7 +16,14 @@ function findClickPos(event) {
   g.s.left = g.x;
   g.s.top = g.y;
   clearInterval(interID);
-  timer();
+  rotateToAngle(j, line);
+  timer(j,g,line);
+}
+function setGoal(id) {
+  let goal = {};
+  goal.x = byId(id).x;
+  goal.y = byId(id).y;
+  return goal;
 }
 // Work out distance, angle, gradient and yIntercept
 function setLine( point1, point2 ) {
@@ -28,6 +43,11 @@ function makeTriangle( point1, point2 ){
   let triangle = {};
   triangle.width = point2.x - point1.x;
   triangle.height = point2.y - point1.y;
+  triangle.hypot = Math.round(
+    Math.hypot(
+      triangle.width, triangle.height
+    )
+  );
   return triangle;
 }
 function measureHypot( point1, point2 ) {
@@ -51,42 +71,53 @@ function findLineGradient( point1, point2 ) {
 function findYIntercept( gradient, point ) {
   return ( point.y - gradient * point.x );
 }
+function findLineEquation( point1, point2 ) {
+  let lineEquation = {};
+  lineEquation.gradient =
+    (point2.y - point1.y) / (point2.x - point1.x);
+  lineEquation.yIntercept =
+    ( point.y - lineEquation.gradient * point.x );
+  return lineEquation;
+}
+
 function findLineAngle(point1, point2){
   let triangle = makeTriangle(point1,point2);
   return ( Math.atan2(
     triangle.height, triangle.width
   ) * 180 / Math.PI );
 }
+function rotateToAngle(actor, line) {
+  actor.s.transform = "rotate("+(line.angle+135)+"deg)";
+}
 // Timer for moveIt
-function timer() {
-  interID = setInterval(moveIt, speed);
+function timer(actor, goal, line) {
+  interID = setInterval(moveIt, speed, actor, goal, line);
 }
 // Move functions
-function moveIt() {
-  j.s.transform = "rotate("+(line.angle+135)+"deg)";
+function moveIt(actor, goal, line) {
   let next = {};
   if (Math.abs(line.width) > Math.abs(line.height)) {
-    if ( j.x < g.x ){
-      next.x = j.x+1;
+    if ( actor.x < goal.x ){
+      next.x = actor.x+1;
     } else {
-      next.x = j.x-1;
+      next.x = actor.x-1;
     }
     next.y = moveLineX(next.x, line);
   } else {
-    if ( j.y < g.y ){
-      next.y = j.y+1;
+    if ( actor.y < goal.y ){
+      next.y = actor.y+1;
     } else {
-      next.y = j.y-1;
+      next.y = actor.y-1;
     }
     next.x = moveLineY(next.y, line);
   }
   // If clear, move
   if ( !colisionCheck("eye") ) {
-    j.x = next.x;
-    j.y = next.y;
-    j.s.left = j.x;
-    j.s.top = j.y;
-    if ( (j.x == g.x) && (j.y == g.y) ) {
+    actor.x = next.x;
+    actor.y = next.y;
+    actor.s.left = actor.x;
+    actor.s.top = actor.y;
+    if ( (actor.x == goal.x) && (actor.y == goal.y) ) {
       clearInterval(interID);
       byId("text").innerHTML += '  -  ARRIVED';
     }
@@ -102,7 +133,7 @@ function moveLineX(x,l) {
 function moveLineY(y,l) {
   return Math.round((y - l.yIntercept) / l.gradient);
 }
-// Check for obstacles
+// Check for obstacles (from eye id)
 function colisionCheck(x) {
   let eyePos = byId(x).getBoundingClientRect();
   let vision = document.elementFromPoint(
@@ -111,6 +142,7 @@ function colisionCheck(x) {
   if (vision.id == 'wall') {
     byId("text").innerHTML += '  -  HIT';
     console.log(vision.getBoundingClientRect());
+    console.log(eyePos.left+' '+eyePos.top);
     return true;
   } else if (vision.id == 'apple') {
     byId("text").innerHTML += '  -  MUNCH';
@@ -139,7 +171,7 @@ function rdmScreenPoint(screenSize, offset = 0) {
   return pointCoord;
 }
 function placeAtRandom(screenSize, id, offset=0){
-  point = rdmScreenPoint(screenSize, offset) ;
+  point = rdmScreenPoint(screenSize, offset);
   byId(id).s.top = point.y;
   byId(id).s.left = point.x;
 }
